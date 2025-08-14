@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  firstname      String
+  lastname       String
+  balance        Decimal        @db.Decimal(19, 2) @default(0)
+  transactions   Transaction[]
+  hashedPassword String
+  flags          Flags[]
+  refreshTokens  RefreshToken[]
+}
+
+model RefreshToken {
+  id        Int      @id @unique @default(autoincrement())
+  token     String
+  User      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Flags {
+  customer   User    @relation(fields: [customerId], references: [id])
+  customerId Int     @id @unique
+  isAdmin    Boolean
+  isBlocked  Boolean
+  isActive   Boolean
+  isVerified Boolean
+}
+
+model Transaction {
+  id                Int      @unique @default(autoincrement())
+  tranId            Int
+  amount            Decimal  @db.Decimal(19, 2)
+  part_tran_type    String   @db.Char(1)
+  createdAt         DateTime @default(now())
+  customer          User     @relation(fields: [customerId], references: [id])
+  customerId        Int
+  customerFirstName String
+  customerLastName  String
+  customerEmail     String
+}
