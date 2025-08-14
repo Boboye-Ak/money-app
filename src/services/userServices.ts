@@ -90,7 +90,7 @@ export const login = async (email: string, password: string) => {
 }
 
 export const refreshAccessToken = async (refreshToken: string) => {
-  const storedToken = await prisma.refreshToken.findFirst({
+  const storedToken = await prisma.refreshToken.findUnique({
     where: { token: refreshToken },
   })
   if (!storedToken) throw new Error("Invalid refresh token")
@@ -103,7 +103,9 @@ export const refreshAccessToken = async (refreshToken: string) => {
     userId: storedToken.userId,
     email: user.email,
   })
-  return  newAccessToken 
+  return newAccessToken
 }
 
-export const logout = async () => {}
+export const logout = async (refreshToken: string) => {
+  await prisma.refreshToken.delete({ where: { token: refreshToken } })
+}

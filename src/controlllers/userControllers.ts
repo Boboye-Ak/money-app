@@ -4,6 +4,7 @@ import {
   getUserByEmail,
   getUserById,
   login,
+  logout,
   refreshAccessToken,
   registerUser,
 } from "../services/userServices"
@@ -69,7 +70,7 @@ export const refreshToken_post = async (req: Request, res: Response) => {
     const accessToken = await refreshAccessToken(refreshToken)
     return res.status(responses[200].responseCode).json({
       message: responses[200].successfulOperation,
-    accessToken,
+      accessToken,
     })
   } catch (e) {
     console.log(e)
@@ -77,4 +78,12 @@ export const refreshToken_post = async (req: Request, res: Response) => {
   }
 }
 
-export const logout_post = async (req: Request, res: Response) => {}
+export const logout_post = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body
+    await logout(refreshToken)
+  } catch (e) {
+    console.log(e)
+    return res.status(responses[500].responseCode).json({message:responses[500].serverError})
+  }
+}
