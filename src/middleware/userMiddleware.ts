@@ -14,12 +14,17 @@ export const validateSignup = (
 ) => {
   try {
     const { email, firstName, lastName, password } = req.body
-    if (!isEmail(email)) {
+    if (!email || !firstName || !lastName || !password) {
+      return res
+        .status(responses[400].responseCode)
+        .json({ message: responses[400].badRequest })
+    }
+    if (!isEmail(email) || !email) {
       return res
         .status(responses[400].responseCode)
         .json({ error: responses[400].invalidEmail })
     }
-    if (!isPasswordComplex(password)) {
+    if (!isPasswordComplex(password) || !password) {
       return res
         .status(responses[400].responseCode)
         .json({ error: responses[400].invalidPassword })

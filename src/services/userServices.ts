@@ -1,9 +1,14 @@
 import bcrypt from "bcrypt"
 import prisma from "../configs/prisma"
 import { User } from "../generated/prisma"
-import { signAccessToken, signRefreshToken } from "./jwtServices"
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "./jwtServices"
 import { errorMessages } from "../configs/errorMessages"
 import ms, { StringValue } from "ms"
+import jwt from "jsonwebtoken"
 
 export const extractAuthorizationToken = (
   authHeader: string
@@ -58,6 +63,7 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
 }
 
 export const login = async (email: string, password: string) => {
+  if (!email || !password) throw new Error(errorMessages.invalidCredentials)
   const user = await getUserByEmail(email)
   if (!user) throw new Error(errorMessages.invalidCredentials)
   const match = await bcrypt.compare(password, user.hashedPassword)
@@ -82,3 +88,22 @@ export const login = async (email: string, password: string) => {
 
   return { accessToken, refreshToken }
 }
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  const storedToken = await prisma.refreshToken.findFirst({
+    where: { token: refreshToken },
+  })
+  if (!storedToken) throw new Error("Invalid refresh token")
+  const user = await prisma.user.findUnique({
+    where: { id: storedToken?.userId },
+  })
+  if (!user) throw new Error("User not found")
+  await verifyRefreshToken(refreshToken)
+  const newAccessToken = signAccessToken({
+    userId: storedToken.userId,
+    email: user.email,
+  })
+  return  newAccessToken 
+}
+
+export const logout = async () => {}

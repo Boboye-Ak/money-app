@@ -4,6 +4,7 @@ import {
   getUserByEmail,
   getUserById,
   login,
+  refreshAccessToken,
   registerUser,
 } from "../services/userServices"
 import responses from "../configs/responses"
@@ -59,6 +60,20 @@ export const user_get = async (req: Request, res: Response) => {
     return res
       .status(responses[500].responseCode)
       .json({ message: responses[500].serverError })
+  }
+}
+
+export const refreshToken_post = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body
+    const accessToken = await refreshAccessToken(refreshToken)
+    return res.status(responses[200].responseCode).json({
+      message: responses[200].successfulOperation,
+    accessToken,
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(401).json({ error: (e as Error).message })
   }
 }
 
