@@ -82,8 +82,11 @@ export const logout_post = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body
     await logout(refreshToken)
+    return res.status(responses[200].responseCode).json({message:responses[200].successfulOperation})
   } catch (e) {
     console.log(e)
-    return res.status(responses[500].responseCode).json({message:responses[500].serverError})
+    return res
+      .status(responses[500].responseCode)
+      .json({ message: responses[500].serverError })
   }
 }

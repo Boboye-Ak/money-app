@@ -3,7 +3,7 @@ import { verifyAccessToken } from "../services/jwtServices"
 import {
   extractAuthorizationToken,
   isPasswordComplex,
-} from "../services/userServices"
+} from "../services/validatorServices"
 import { isEmail } from "validator"
 import responses from "../configs/responses"
 
