@@ -14,6 +14,6 @@ authRouter.get("/", [requireAuth], user_get)
 authRouter.post("/signup", [validateSignup], signup_post)
 authRouter.post("/login", login_post)
 authRouter.post("/refresh", refreshToken_post)
-authRouter.post("/logout", logout_post)
+authRouter.post("/logout", [requireAuth], logout_post)
 
 export default authRouter

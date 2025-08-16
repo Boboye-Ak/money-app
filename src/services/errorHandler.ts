@@ -11,7 +11,6 @@ export const duplicateRecordCheck = (e: unknown) => {
 export const handleSignupError = (e: unknown) => {
   console.log(e)
   if (duplicateRecordCheck(e).isDuplicateRecord) {
-    //return res.status(responses[409].responseCode).json({ error: responses[409].duplicateEmail })
     return {
       code: responses[409].responseCode,
       message: responses[409].duplicateEmail,

@@ -1,3 +1,3 @@
-export const errorMessages={
-    invalidCredentials:"Invalid credentials"
+export const errorMessages = {
+  invalidCredentials: "Invalid credentials",
 }

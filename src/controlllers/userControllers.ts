@@ -67,6 +67,11 @@ export const user_get = async (req: Request, res: Response) => {
 export const refreshToken_post = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body
+    if (!refreshToken) {
+      return res
+        .status(responses[400].responseCode)
+        .json({ message: responses[400].badRequest })
+    }
     const accessToken = await refreshAccessToken(refreshToken)
     return res.status(responses[200].responseCode).json({
       message: responses[200].successfulOperation,
@@ -81,8 +86,15 @@ export const refreshToken_post = async (req: Request, res: Response) => {
 export const logout_post = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body
+    if (!refreshToken) {
+      return res
+        .status(responses[400].responseCode)
+        .json({ message: responses[400].badRequest })
+    }
     await logout(refreshToken)
-    return res.status(responses[200].responseCode).json({message:responses[200].successfulOperation})
+    return res
+      .status(responses[200].responseCode)
+      .json({ message: responses[200].successfulOperation })
   } catch (e) {
     console.log(e)
     return res
