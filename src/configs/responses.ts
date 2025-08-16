@@ -14,6 +14,7 @@ export default {
     responseCode: 401,
     invalidAuthHeader: "Invalid Authorization Header",
     invalidUsernameOrPassword: "Invalid Username or password",
+    invalidAccessToken:"Invalid or expired Access Token"
   },
   409: {
     responseCode: 409,

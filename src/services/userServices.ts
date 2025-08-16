@@ -24,6 +24,12 @@ export const registerUser = async (
       firstname: firstName.toUpperCase(),
       lastname: lastName.toUpperCase(),
       hashedPassword,
+      flags: {
+        create: {},
+      },
+    },
+    include: {
+      flags: true,
     },
   })
 }
@@ -31,6 +37,7 @@ export const registerUser = async (
 export const getUserById = async (userId: number): Promise<User | null> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: { flags: true },
   })
   return user
 }
@@ -38,6 +45,7 @@ export const getUserById = async (userId: number): Promise<User | null> => {
 export const getUserByEmail = async (email: string): Promise<User | null> => {
   const user = await prisma.user.findUnique({
     where: { email: email.toLowerCase() },
+    include: { flags: true },
   })
   return user
 }

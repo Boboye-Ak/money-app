@@ -38,10 +38,10 @@ model RefreshToken {
 model Flags {
   customer   User    @relation(fields: [customerId], references: [id])
   customerId Int     @id @unique
-  isAdmin    Boolean
-  isBlocked  Boolean
-  isActive   Boolean
-  isVerified Boolean
+  isAdmin    Boolean @default(false)
+  isBlocked  Boolean @default(false)
+  isActive   Boolean @default(true)
+  isVerified Boolean @default(true)
 }
 
 model Transaction {
@@ -55,4 +55,5 @@ model Transaction {
   customerFirstName String
   customerLastName  String
   customerEmail     String
+  narration String  @default("")
 }

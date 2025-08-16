@@ -55,8 +55,16 @@ export const requireAuth = async (
         .status(responses[401].responseCode)
         .json({ error: responses[401].invalidAuthHeader })
     }
-    const payload = verifyAccessToken(token)
-    req.user = payload
+    try {
+      const payload = verifyAccessToken(token)
+      req.user = payload
+    } catch (e) {
+      console.log(e)
+      return res
+        .status(responses[401].responseCode)
+        .json({ message: responses[401].invalidAccessToken })
+    }
+
     next()
   } catch (e) {
     console.log(e)
