@@ -31,7 +31,7 @@ export const signup_post = async (req: Request, res: Response) => {
 
 export const login_post = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req?.body
     const tokens = await login(email, password)
     return res
       .status(responses[200].responseCode)
@@ -66,7 +66,7 @@ export const user_get = async (req: Request, res: Response) => {
 
 export const refreshToken_post = async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body
+    const { refreshToken } = req?.body
     if (!refreshToken) {
       return res
         .status(responses[400].responseCode)
@@ -85,7 +85,7 @@ export const refreshToken_post = async (req: Request, res: Response) => {
 
 export const logout_post = async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body
+    const { refreshToken } = req?.body
     if (!refreshToken) {
       return res
         .status(responses[400].responseCode)
