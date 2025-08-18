@@ -1,7 +1,6 @@
 import { Prisma } from "../generated/prisma"
 import { Request, Response } from "express"
 import {
-  getUserByEmail,
   getUserById,
   login,
   logout,
@@ -30,62 +29,25 @@ export const login_post = async (req: Request, res: Response) => {
 }
 
 export const user_get = async (req: Request, res: Response) => {
-  try {
-    if (req.user && typeof req.user !== "string" && "userId" in req.user) {
-      const { userId } = req.user
-      const user = await getUserById(userId)
-      if (!user) {
-        return res
-          .status(responses[404].responseCode)
-          .json({ message: responses[404].userNotFound })
-      }
-      const { hashedPassword, ...safeUser } = user
-      return res
-        .status(responses[200].responseCode)
-        .json({ message: responses[200].successfulOperation, data: safeUser })
-    }
-  } catch (e) {
+  if (req.user && typeof req.user !== "string" && "userId" in req.user) {
+    const { userId } = req.user
+    const result = await getUserById(userId)
     return res
-      .status(responses[500].responseCode)
-      .json({ message: responses[500].serverError })
+      .status(result.responseCode)
+      .json({ message: result.message, data: result?.user })
   }
 }
 
 export const refreshToken_post = async (req: Request, res: Response) => {
-  try {
-    const { refreshToken } = req?.body
-    if (!refreshToken) {
-      return res
-        .status(responses[400].responseCode)
-        .json({ message: responses[400].badRequest })
-    }
-    const accessToken = await refreshAccessToken(refreshToken)
-    return res.status(responses[200].responseCode).json({
-      message: responses[200].successfulOperation,
-      accessToken,
-    })
-  } catch (e) {
-    console.log(e)
-    res.status(401).json({ error: (e as Error).message })
-  }
+  const { refreshToken } = req?.body
+  const result = await refreshAccessToken(refreshToken)
+  return res
+    .status(result.responseCode)
+    .json({ message: result.message, accessToken: result.accessToken })
 }
 
 export const logout_post = async (req: Request, res: Response) => {
-  try {
-    const { refreshToken } = req?.body
-    if (!refreshToken) {
-      return res
-        .status(responses[400].responseCode)
-        .json({ message: responses[400].badRequest })
-    }
-    await logout(refreshToken)
-    return res
-      .status(responses[200].responseCode)
-      .json({ message: responses[200].successfulOperation })
-  } catch (e) {
-    console.log(e)
-    return res
-      .status(responses[500].responseCode)
-      .json({ message: responses[500].serverError })
-  }
+  const { refreshToken } = req?.body
+  const result = await logout(refreshToken)
+  return res.status(result?.responseCode).json({ message: result?.message })
 }

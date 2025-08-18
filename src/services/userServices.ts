@@ -40,37 +40,44 @@ export const registerUser = async (
     })
     return { message: "Operation Completed Successfully", responseCode: 200 }
   } catch (e) {
-    console.log(e)
-    if (e instanceof AppError) {
-      return {
-        message: e.message || "Error Creating User",
-        responseCode: e.responseCode,
-      }
-    }
-    return { message: "Unknown error", responseCode: 500 }
+    return AppError.handleAppError(e, "Error Signing Up")
   }
 }
 
-export const getUserById = async (userId: number): Promise<User | null> => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { flags: true },
-  })
-  return user
+export const getUserById = async (
+  userId: number
+): Promise<{ responseCode: number; message: string; user?: any }> => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { flags: true },
+    })
+    if (!user) throw new AppError("User Not Found", 404)
+    const { hashedPassword, ...safeUser } = user
+    return {
+      responseCode: 200,
+      message: "Operation Completed Successfully",
+      user: safeUser,
+    }
+  } catch (e) {
+    return AppError.handleAppError(e, "Error Getting User")
+  }
 }
 
-export const getUserByEmail = async (email: string): Promise<User | null> => {
-  const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
-    include: { flags: true },
-  })
-  return user
-}
-
-export const login = async (email: string, password: string) => {
+export const login = async (
+  email: string,
+  password: string
+): Promise<{
+  responseCode: number
+  message: string
+  tokens?: { accessToken: string; refreshToken: string }
+}> => {
   try {
     if (!email || !password) throw new AppError("Invalid Credentials", 401)
-    const user = await getUserByEmail(email)
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: { flags: true },
+    })
     if (!user) throw new AppError("Invalid Credentials", 401)
     const match = await bcrypt.compare(password, user.hashedPassword)
     if (!match) throw new AppError("Invalid Credentials", 401)
@@ -98,34 +105,42 @@ export const login = async (email: string, password: string) => {
       tokens: { accessToken, refreshToken },
     }
   } catch (e) {
-    console.log(e)
-    if (e instanceof AppError) {
-      return {
-        message: e.message || "Error Logging in",
-        responseCode: e.responseCode,
-      }
-    }
-    return { message: "Unknown error", responseCode: 500 }
+    return AppError.handleAppError(e, "Error Signing Up")
   }
 }
 
-export const refreshAccessToken = async (refreshToken: string) => {
-  const storedToken = await prisma.refreshToken.findUnique({
-    where: { token: refreshToken },
-  })
-  if (!storedToken) throw new Error("Invalid refresh token")
-  const user = await prisma.user.findUnique({
-    where: { id: storedToken?.userId },
-  })
-  if (!user) throw new Error("User not found")
-  await verifyRefreshToken(refreshToken)
-  const newAccessToken = signAccessToken({
-    userId: storedToken.userId,
-    email: user.email,
-  })
-  return newAccessToken
+export const refreshAccessToken = async (
+  refreshToken: string
+): Promise<{ responseCode: number; message: string; accessToken?: string }> => {
+  try {
+    const storedToken = await prisma.refreshToken.findUnique({
+      where: { token: refreshToken },
+    })
+    if (!storedToken) throw new AppError("Invalid refresh token", 401)
+    const user = await prisma.user.findUnique({
+      where: { id: storedToken?.userId },
+    })
+    if (!user) throw new AppError("User not found", 404)
+    await verifyRefreshToken(refreshToken)
+    const accessToken = signAccessToken({
+      userId: storedToken.userId,
+      email: user.email,
+    })
+    return {
+      responseCode: 200,
+      message: "Operation Completed Successfully",
+      accessToken,
+    }
+  } catch (e) {
+    return AppError.handleAppError(e, "Error Refreshing Token")
+  }
 }
 
 export const logout = async (refreshToken: string) => {
-  await prisma.refreshToken.delete({ where: { token: refreshToken } })
+  try {
+    await prisma.refreshToken.delete({ where: { token: refreshToken } })
+    return { message: "Operation Completed Successfully", responseCode: 200 }
+  } catch (e) {
+    return AppError.handleAppError(e, "Error Logging out")
+  }
 }
