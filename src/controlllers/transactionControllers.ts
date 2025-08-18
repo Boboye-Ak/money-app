@@ -15,7 +15,6 @@ export const transaction_post = async (req: Request, res: Response) => {
     amount.toFixed(2),
     narration
   )
-  console.log(transferResult)
   return res
     .status(transferResult?.responseCode as number)
     .json({ message: transferResult?.message })

@@ -16,30 +16,17 @@ import {
 } from "../services/errorHandler"
 
 export const signup_post = async (req: Request, res: Response) => {
-  try {
-    const { email, firstName, lastName, password } = req?.body
-    const user = await registerUser(email, firstName, lastName, password)
-    return res
-      .status(responses[200].responseCode)
-      .json({ message: responses[200].successfulOperation })
-  } catch (e) {
-    console.log(e)
-    const response = handleSignupError(e)
-    return res.status(response.code).json({ message: response.message })
-  }
+  const { email, firstName, lastName, password } = req?.body
+  const result = await registerUser(email, firstName, lastName, password)
+  return res.status(result.responseCode).json({ message: result.message })
 }
 
 export const login_post = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req?.body
-    const tokens = await login(email, password)
-    return res
-      .status(responses[200].responseCode)
-      .json({ message: responses[200].successfulOperation, ...tokens })
-  } catch (e) {
-    const response = handleLoginError(e)
-    return res.status(response.code).json({ message: response.message })
-  }
+  const { email, password } = req?.body
+  const result = await login(email, password)
+  return res
+    .status(result.responseCode)
+    .json({ message: result.message, tokens: result.tokens })
 }
 
 export const user_get = async (req: Request, res: Response) => {
