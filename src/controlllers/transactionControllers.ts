@@ -16,6 +16,6 @@ export const transaction_post = async (req: Request, res: Response) => {
     narration
   )
   return res
-    .status(transferResult?.responseCode as number)
+    .status(transferResult?.responseCode)
     .json({ message: transferResult?.message })
 }

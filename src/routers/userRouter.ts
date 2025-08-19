@@ -6,14 +6,28 @@ import {
   signup_post,
   user_get,
 } from "../controlllers/userControllers"
-import { requireAuth, validateSignup } from "../middleware/userMiddleware"
+import { requireAuth} from "../middleware/userMiddleware"
+import {
+  loginValidator,
+  refreshTokenValidator,
+  signUpValidator,
+} from "../services/validatorServices"
+import { validateRequest } from "../middleware/validateRequest"
 
 const authRouter = express.Router()
 
 authRouter.get("/", [requireAuth], user_get)
-authRouter.post("/signup", [validateSignup], signup_post)
-authRouter.post("/login", login_post)
-authRouter.post("/refresh", refreshToken_post)
-authRouter.post("/logout", [requireAuth], logout_post)
+authRouter.post("/signup", [...signUpValidator, validateRequest], signup_post)
+authRouter.post("/login", [...loginValidator, validateRequest], login_post)
+authRouter.post(
+  "/refresh",
+  [...refreshTokenValidator, validateRequest],
+  refreshToken_post
+)
+authRouter.post(
+  "/logout",
+  [...refreshTokenValidator, requireAuth, validateRequest],
+  logout_post
+)
 
 export default authRouter
