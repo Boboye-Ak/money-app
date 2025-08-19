@@ -53,14 +53,16 @@ export const getTransactionsValidator = [
     .optional()
     .isInt({ min: 1 })
     .withMessage("Limit must be an integer")
-    .toInt().default(10),
+    .toInt()
+    .default(10),
   query("page")
     .optional()
     .isInt({ min: 1 })
     .withMessage("page must be an integer")
-    .toInt().default(1),
+    .toInt()
+    .default(1),
 ]
 
 export const getTransactionValidator = [
-  param("id").isInt({ min: 1 }).withMessage("id must be an integer").toInt(),
+  param("id").isString().withMessage("id must be a string"),
 ]

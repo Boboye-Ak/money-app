@@ -5,13 +5,21 @@ import {
   transactions_get,
 } from "../controlllers/transactionControllers"
 import { requireAuth } from "../middleware/userMiddleware"
-import { getTransactionsValidator, transferValidator } from "../services/validatorServices"
+import {
+  getTransactionsValidator,
+  getTransactionValidator,
+  transferValidator,
+} from "../services/validatorServices"
 import { validateRequest } from "../middleware/validateRequest"
 
 const transactionRouter = express.Router()
 
-transactionRouter.get("/", [requireAuth, ...getTransactionsValidator, validateRequest], transactions_get)
-transactionRouter.get("/:id", [requireAuth], transaction_get)
+transactionRouter.get(
+  "/",
+  [requireAuth, ...getTransactionsValidator, validateRequest],
+  transactions_get
+)
+transactionRouter.get("/:id", [requireAuth, ...getTransactionValidator, validateRequest], transaction_get)
 transactionRouter.post(
   "/transfer",
   [requireAuth, ...transferValidator, validateRequest],

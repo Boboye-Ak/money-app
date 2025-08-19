@@ -6,7 +6,12 @@ export const getTransactions = async (
   userId: number,
   page: number,
   limit: number
-): Promise<{ responseCode: number; message: string; transactions?: any[], count?:number }> => {
+): Promise<{
+  responseCode: number
+  message: string
+  transactions?: any[]
+  count?: number
+}> => {
   try {
     const skip = (page - 1) * limit
     const transactions = await prisma.fullTransaction.findMany({
@@ -14,13 +19,34 @@ export const getTransactions = async (
       take: limit,
       where: { OR: [{ senderId: userId }, { ReceiverId: userId }] },
     })
-    return { responseCode: 200, message: "Operation Successful", transactions, count:transactions.length }
+    return {
+      responseCode: 200,
+      message: "Operation Successful",
+      transactions,
+      count: transactions.length,
+    }
   } catch (e) {
     return AppError.handleAppError(e, "Error Getting Transaction")
   }
 }
 
-export const getTransaction = async (tranId: number) => {}
+export const getTransaction = async (
+  userId: number,
+  tranId: string
+): Promise<{ responseCode: number; message: string; transaction?: any }> => {
+  try {
+    const transaction = await prisma.fullTransaction.findFirst({
+      where: {
+        tranId: tranId,
+        OR: [{ senderId: userId }, { ReceiverId: userId }],
+      },
+    })
+    if (!transaction) throw new AppError("Transaction Not Found", 404)
+    return { responseCode: 200, message: "Operation Successful", transaction }
+  } catch (e) {
+    return AppError.handleAppError(e, "Error getting transaction")
+  }
+}
 
 export const makeTransfer = async (
   senderEmail: string,
