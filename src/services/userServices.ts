@@ -118,6 +118,7 @@ export const refreshAccessToken = async (
     if (!storedToken) throw new AppError("Invalid refresh token", 401)
     const user = await prisma.user.findUnique({
       where: { id: storedToken?.userId },
+      include: { flags: true },
     })
     if (!user) throw new AppError("User not found", 404)
     await verifyRefreshToken(refreshToken)

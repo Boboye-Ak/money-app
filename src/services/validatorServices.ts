@@ -1,4 +1,4 @@
-import { body } from "express-validator"
+import { body, query, param } from "express-validator"
 
 export const extractAuthorizationToken = (
   authHeader: string
@@ -29,6 +29,7 @@ export const signUpValidator = [
 
 export const loginValidator = [
   body("email").isEmail().withMessage("Invalid Email Address"),
+  body("password").isString().withMessage("Password is missing"),
 ]
 
 export const refreshTokenValidator = [
@@ -45,4 +46,21 @@ export const transferValidator = [
       }
       return true // must return true if valid
     }),
+]
+
+export const getTransactionsValidator = [
+  query("limit")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Limit must be an integer")
+    .toInt().default(10),
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("page must be an integer")
+    .toInt().default(1),
+]
+
+export const getTransactionValidator = [
+  param("id").isInt({ min: 1 }).withMessage("id must be an integer").toInt(),
 ]

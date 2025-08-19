@@ -2,6 +2,26 @@ import prisma from "../configs/prisma"
 import { v4 as uuidv4 } from "uuid"
 import { AppError } from "../types/error"
 
+export const getTransactions = async (
+  userId: number,
+  page: number,
+  limit: number
+): Promise<{ responseCode: number; message: string; transactions?: any[], count?:number }> => {
+  try {
+    const skip = (page - 1) * limit
+    const transactions = await prisma.fullTransaction.findMany({
+      skip: skip,
+      take: limit,
+      where: { OR: [{ senderId: userId }, { ReceiverId: userId }] },
+    })
+    return { responseCode: 200, message: "Operation Successful", transactions, count:transactions.length }
+  } catch (e) {
+    return AppError.handleAppError(e, "Error Getting Transaction")
+  }
+}
+
+export const getTransaction = async (tranId: number) => {}
+
 export const makeTransfer = async (
   senderEmail: string,
   receiverEmail: string,
