@@ -13,6 +13,7 @@ import {
   handleLoginError,
   handleSignupError,
 } from "../services/errorHandler"
+import { MyJwtPayload } from "../types/jwt"
 
 export const signup_post = async (req: Request, res: Response) => {
   const { email, firstName, lastName, password } = req?.body
@@ -29,13 +30,11 @@ export const login_post = async (req: Request, res: Response) => {
 }
 
 export const user_get = async (req: Request, res: Response) => {
-  if (req.user && typeof req.user !== "string" && "userId" in req.user) {
-    const { userId } = req.user
-    const result = await getUserById(userId)
-    return res
-      .status(result.responseCode)
-      .json({ message: result.message, data: result?.user })
-  }
+  const { email: senderEmail, userId } = req.user as MyJwtPayload
+  const result = await getUserById(userId)
+  return res
+    .status(result.responseCode)
+    .json({ message: result.message, data: result?.user })
 }
 
 export const refreshToken_post = async (req: Request, res: Response) => {

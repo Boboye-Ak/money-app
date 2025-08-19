@@ -73,7 +73,6 @@ export const login = async (
   tokens?: { accessToken: string; refreshToken: string }
 }> => {
   try {
-    if (!email || !password) throw new AppError("Invalid Credentials", 401)
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: { flags: true },
