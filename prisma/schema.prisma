@@ -18,6 +18,7 @@ model User {
   flags          Flags?
   refreshTokens  RefreshToken[]
   transactions   Transaction[]
+  createdAt         DateTime @default(now())
 }
 
 model RefreshToken {
