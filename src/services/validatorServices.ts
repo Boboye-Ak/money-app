@@ -66,3 +66,18 @@ export const getTransactionsValidator = [
 export const getTransactionValidator = [
   param("id").isString().withMessage("id must be a string"),
 ]
+
+export const adminGetUsersValidator= [
+  query("limit")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Limit must be an integer")
+    .toInt()
+    .default(10),
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("page must be an integer")
+    .toInt()
+    .default(1),
+]

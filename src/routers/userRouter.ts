@@ -6,7 +6,7 @@ import {
   signup_post,
   user_get,
 } from "../controlllers/userControllers"
-import { requireAuth} from "../middleware/userMiddleware"
+import { requireAuth } from "../middleware/userMiddleware"
 import {
   loginValidator,
   refreshTokenValidator,

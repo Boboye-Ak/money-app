@@ -19,7 +19,11 @@ transactionRouter.get(
   [requireAuth, ...getTransactionsValidator, validateRequest],
   transactions_get
 )
-transactionRouter.get("/:id", [requireAuth, ...getTransactionValidator, validateRequest], transaction_get)
+transactionRouter.get(
+  "/:id",
+  [requireAuth, ...getTransactionValidator, validateRequest],
+  transaction_get
+)
 transactionRouter.post(
   "/transfer",
   [requireAuth, ...transferValidator, validateRequest],

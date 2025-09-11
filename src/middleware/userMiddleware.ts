@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express"
 import { verifyAccessToken } from "../services/jwtServices"
 import { extractAuthorizationToken } from "../services/validatorServices"
 import responses from "../configs/responses"
+import { MyJwtPayload } from "../types/jwt"
+import prisma from "../configs/prisma"
 
 export const requireAuth = async (
   req: Request,
@@ -38,4 +40,25 @@ export const requireAuth = async (
       .status(responses[500].responseCode)
       .json({ error: responses[500].serverError })
   }
+}
+
+export const requireAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.user as MyJwtPayload
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { flags: true },
+  })
+  if (!user) {
+    return res.status(404).json({ message: "User Not found" })
+  }
+  if (!user.flags?.isAdmin) {
+    return res
+      .status(401)
+      .json({ message: "Admin Access is required to access this endpoint" })
+  }
+  next()
 }

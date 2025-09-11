@@ -16,6 +16,7 @@ export const adminGetUsers = async (page: number, limit: number) => {
         lastname: true,
         balance: true,
         createdAt: true,
+        flags: true,
       },
     })
 
@@ -42,6 +43,7 @@ export const adminGetUser = async (userId: number) => {
         lastname: true,
         balance: true,
         createdAt: true,
+        flags: true,
       },
     })
     if (!user) throw new AppError("User not found", 404)

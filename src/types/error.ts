@@ -10,7 +10,10 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, new.target.prototype)
   }
   // Static method to handle errors consistently
-  static handleAppError(e: unknown, defaultMessage: string):{message:string, responseCode:number} {
+  static handleAppError(
+    e: unknown,
+    defaultMessage: string
+  ): { message: string; responseCode: number } {
     console.log(e)
 
     if (e instanceof AppError) {
