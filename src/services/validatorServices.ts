@@ -67,7 +67,7 @@ export const getTransactionValidator = [
   param("id").isString().withMessage("id must be a string"),
 ]
 
-export const adminGetUsersValidator= [
+export const adminGetUsersValidator = [
   query("limit")
     .optional()
     .isInt({ min: 1 })
@@ -80,4 +80,18 @@ export const adminGetUsersValidator= [
     .withMessage("page must be an integer")
     .toInt()
     .default(1),
+]
+
+export const adminGerUserValidator = [
+  param("id")
+    .isInt({ min: 1 })
+    .withMessage("Id must be a positive integer")
+    .toInt(),
+]
+
+export const adminBlockAndUnblockUserValidator = [
+  param("id")
+    .isInt({ min: 1 })
+    .withMessage("Id must be a positive integer")
+    .toInt(),
 ]

@@ -1,6 +1,9 @@
 import prisma from "../configs/prisma"
 import { AppError } from "../types/error"
-export const adminGetUsers = async (page: number, limit: number) => {
+export const adminGetUsers = async (
+  page: number,
+  limit: number
+): Promise<{ message: string; responseCode: number; users?: any }> => {
   try {
     const skip = (page - 1) * limit
     const users = await prisma.user.findMany({
@@ -30,7 +33,9 @@ export const adminGetUsers = async (page: number, limit: number) => {
   }
 }
 
-export const adminGetUser = async (userId: number) => {
+export const adminGetUser = async (
+  userId: number
+): Promise<{ message: string; responseCode: number; user?: any }> => {
   try {
     const user = await prisma.user.findFirst({
       where: {
@@ -47,13 +52,19 @@ export const adminGetUser = async (userId: number) => {
       },
     })
     if (!user) throw new AppError("User not found", 404)
-    return { message: "Operation Completed Successfully", user }
+    return {
+      message: "Operation Completed Successfully",
+      responseCode: 200,
+      user,
+    }
   } catch (e) {
     return AppError.handleAppError(e, "Error Getting User")
   }
 }
 
-export const blockUser = async (userId: number) => {
+export const blockUser = async (
+  userId: number
+): Promise<{ message: string; responseCode: number }> => {
   try {
     const user = await prisma.flags.update({
       where: {
@@ -69,7 +80,7 @@ export const blockUser = async (userId: number) => {
   }
 }
 
-export const unblockUser = async (userId: number) => {
+export const unblockUser = async (userId: number): Promise<{ message: string; responseCode: number }> => {
   try {
     const user = await prisma.flags.update({
       where: {
