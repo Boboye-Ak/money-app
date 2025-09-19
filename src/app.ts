@@ -4,6 +4,7 @@ initialize()
 import environmentVariables from "./configs/environmentVariables"
 import authRouter from "./routers/userRouter"
 import transactionRouter from "./routers/transactionRouter"
+import adminRouter from "./routers/adminRouter"
 
 const app = express()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 //Routers
 app.use("/api/user", authRouter)
 app.use("/api/transactions", transactionRouter)
+app.use("/api/admin", adminRouter)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!")

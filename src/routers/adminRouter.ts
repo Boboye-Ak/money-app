@@ -25,12 +25,12 @@ adminRouter.get(
   adminGetUser_get
 )
 adminRouter.put(
-  "users/block/:id",
+  "/users/block/:id",
   [requireAuth, requireAdmin, ...adminBlockAndUnblockUserValidator],
   adminBlockUser_put
 )
 adminRouter.put(
-  "users/unlock/:id",
+  "/users/unblock/:id",
   [requireAuth, requireAdmin, ...adminBlockAndUnblockUserValidator],
   adminUnBlockUser_put
 )
