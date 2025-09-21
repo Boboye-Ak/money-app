@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
-import initialize from "./loaders/initialize"
-initialize()
+import dotenv from "dotenv"
+dotenv.config()
 import environmentVariables from "./configs/environmentVariables"
 import authRouter from "./routers/userRouter"
 import transactionRouter from "./routers/transactionRouter"
@@ -25,8 +25,7 @@ app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" })
 })
 
-app.listen(environmentVariables.port, () => {
-  console.log(`Server is listening on port ${environmentVariables.port}`)
-})
-
+//app.listen(environmentVariables.port, () => {
+//  console.log(`Server is listening on port ${environmentVariables.port}`)
+//})
 export default app
